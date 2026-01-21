@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tekel Log Checker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: radial-gradient(circle, #1a202c 0%, #0a0a0a 100%);
+        }
+        .tekel-gold { color: #d97706; }
+        .tekel-border { border-color: #d97706; box-shadow: 0 0 15px rgba(217, 119, 6, 0.2); }
+        .tekel-btn { background-color: #d97706; transition: 0.3s; }
+        .tekel-btn:hover { background-color: #b45309; transform: scale(1.02); }
+    </style>
+</head>
+<body class="text-white min-h-screen flex items-center justify-center p-4">
+
+    <div class="max-w-md w-full bg-gray-800 p-8 rounded-3xl border-2 tekel-border">
+        <div class="flex justify-center mb-6">
+            <img src="assets/logo.png" alt="Tekel Logo" class="w-24 h-24 rounded-full border-2 border-yellow-600 shadow-lg">
+        </div>
+
+        <h1 class="text-3xl font-black text-center mb-2 tekel-gold uppercase tracking-tighter">TEKEL CHECKER</h1>
+        <p class="text-center text-gray-400 text-xs mb-8 uppercase tracking-widest">Premium Log Services</p>
+
+        <div class="space-y-4">
+            <input type="text" id="siteInput" placeholder="Site adresi (örn: netflix.com)" 
+                class="w-full p-4 rounded-xl bg-gray-900 border border-gray-700 focus:outline-none focus:border-yellow-600 transition-all text-center font-bold">
+            
+            <button onclick="logSorgula()" id="sorguBtn"
+                class="w-full tekel-btn text-gray-900 font-black py-4 rounded-xl uppercase tracking-widest shadow-xl">
+                SORGULA VE İNDİR
+            </button>
+        </div>
+
+        <div id="statusArea" class="mt-6 hidden text-center">
+            <div id="loader" class="text-yellow-500 animate-pulse font-bold text-sm mb-2">İŞLEM YAPILIYOR...</div>
+            <div id="resultBox" class="text-[10px] text-green-400 font-mono bg-black p-3 rounded-lg border border-gray-700 overflow-hidden text-left h-24 overflow-y-auto">
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
