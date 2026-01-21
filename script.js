@@ -13,19 +13,29 @@ async function logSorgula() {
     btn.disabled = true;
     btn.style.opacity = "0.5";
     statusArea.classList.remove('hidden');
-    resultBox.innerText = "Sunucuya bağlanılıyor...";
+    resultBox.innerText = "Veri çekiliyor (Yöntem 2)...";
+    loader.innerText = "SUNUCUYA BAĞLANILIYOR...";
 
-    // API adresi ve Proxy birleşimi
-    const targetUrl = `https://free.zirveexec.com/api_public.php?site=${site}`;
-    const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`;
+    // API adresi
+    const api_url = `https://free.zirveexec.com/api_public.php?site=${site}`;
+    
+    // AllOrigins Proxy kullanarak CORS engelini aşma
+    const proxy_url = `https://api.allorigins.win/get?url=${encodeURIComponent(api_url)}`;
 
     try {
-        const response = await fetch(proxyUrl);
+        const response = await fetch(proxy_url);
+        if (!response.ok) throw new Error('Proxy Hatası');
         
-        if (!response.ok) throw new Error('API Yanıt Vermedi');
-        
-        const data = await response.text();
-        loader.innerText = "REKLAMLAR AYIKLANIYOR...";
+        const json = await response.json(); // AllOrigins veriyi JSON içinde 'contents' olarak döndürür
+        const data = json.contents;
+
+        if (!data || data.includes("error")) {
+            loader.innerText = "API HATASI!";
+            resultBox.innerText = "API şu an boş dönüyor veya hatalı.";
+            return;
+        }
+
+        loader.innerText = "TEMİZLENİYOR...";
 
         let lines = data.split('\n');
         let cleanLines = lines.filter(line => {
@@ -34,7 +44,6 @@ async function logSorgula() {
                    !l.includes('http') && 
                    !l.includes('t.me') && 
                    !l.includes('@') && 
-                   !l.includes('join') &&
                    l.length > 5;
         });
 
@@ -42,17 +51,17 @@ async function logSorgula() {
 
         if (finalContent.length < 5) {
             loader.innerText = "LOG BULUNAMADI!";
-            resultBox.innerText = "Bu siteye ait temiz log verisi dönmedi.";
+            resultBox.innerText = "Filtreleme sonrası veri kalmadı. Ham veri:\n" + data.substring(0, 50);
         } else {
-            loader.innerText = "LOG TEMİZLENDİ, İNDİRİLİYOR...";
+            loader.innerText = "BAŞARILI! İNDİRİLİYOR...";
             resultBox.innerText = finalContent;
             dosyayiIndir(site, finalContent);
         }
 
     } catch (error) {
-        loader.innerText = "BAĞLANTI HATASI!";
-        resultBox.innerText = "API veya Proxy şu an yanıt vermiyor. Lütfen az sonra tekrar deneyin.";
-        console.error("Hata:", error);
+        loader.innerText = "PROXY HATASI!";
+        resultBox.innerText = "Lütfen tarayıcınızın gizli sekmesinden deneyin veya API'nin açık olduğundan emin olun.";
+        console.error("Hata detayı:", error);
     } finally {
         btn.disabled = false;
         btn.style.opacity = "1";
